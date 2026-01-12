@@ -13,6 +13,12 @@
 	--text-secondary: #717171;
 	--white: #ffffff;
 	--success: #00a699;
+	--warning: #f5a623;
+	--warning-alt: #ff9800;
+	--hero-gradient-start: #667eea;
+	--hero-gradient-end: #764ba2;
+	--form-bg-gradient-start: #f5f7fa;
+	--form-bg-gradient-end: #c3cfe2;
 	--shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
 	--shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
 	--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
@@ -81,7 +87,11 @@ h6 {
 	position: relative;
 	height: 70vh;
 	min-height: 500px;
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	background: linear-gradient(
+		135deg,
+		var(--hero-gradient-start) 0%,
+		var(--hero-gradient-end) 100%
+	);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -454,6 +464,30 @@ h6 {
 	margin-top: 0.25rem;
 }
 
+.messageError {
+	color: var(--primary-color);
+	font-size: 0.875rem;
+	font-weight: 500;
+	display: block;
+	margin-top: 0.5rem;
+}
+
+.messageSuccess {
+	color: var(--success);
+	font-size: 0.875rem;
+	font-weight: 500;
+	display: block;
+	margin-top: 0.5rem;
+}
+
+.messageWarning {
+	color: var(--warning);
+	font-size: 0.875rem;
+	font-weight: 500;
+	display: block;
+	margin-top: 0.5rem;
+}
+
 /* Calendar Styles */
 .calendar-container {
 	background: var(--white);
@@ -602,7 +636,7 @@ h6 {
 
 .availability-badge.limited {
 	background-color: rgba(255, 165, 0, 0.1);
-	color: #ff9800;
+	color: var(--warning-alt);
 }
 
 .availability-badge.unavailable {
@@ -611,7 +645,11 @@ h6 {
 }
 /* Form Page Specific */
 .form-page-section {
-	background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+	background: linear-gradient(
+		135deg,
+		var(--form-bg-gradient-start) 0%,
+		var(--form-bg-gradient-end) 100%
+	);
 	min-height: 100vh;
 }
 
