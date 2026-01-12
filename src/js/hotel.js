@@ -42,12 +42,14 @@ function searchBoxSection() {
 	//get values
 	const checkIn = document.getElementById("searchCheckIn").value;
 	const checkOut = document.getElementById("searchCheckOut").value;
+
+	
+
 	const guests = document.getElementById("searchGuests").value;
 
 	//validator empty values
 	if (checkIn === "" || checkOut === "") {
 		let message = document.getElementById("error");
-		message.classList.add("color: error")
+		message.classList.add("color: error");
 	}
-
 }
