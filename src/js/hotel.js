@@ -1,4 +1,12 @@
+/**
+ * @file hotel.js
+ * @description Lógica central del sistema de reservas, incluyendo modelos POO,
+ * filtrado por disponibilidad real y cálculo de precios dinámicos.
+ */
+
 // ---- ENUMS ----
+
+/** @enum {string} Categorías de habitaciones disponibles */
 const ROOMTYPE = Object.freeze({
 	SUITE: "suite",
 	DOUBLES: "doubles",
@@ -8,12 +16,14 @@ const ROOMTYPE = Object.freeze({
 	PENTHOUSE: "penthouse",
 });
 
+/** @enum {string} Tipos de estado para mensajes de interfaz */
 const TYPESTATUS = Object.freeze({
 	SUCCESS: "success",
 	ERROR: "error",
 	WARNING: "warning",
 });
 
+/** @enum {string} Nombres de las colecciones en LocalStorage */
 const TYPESDB = Object.freeze({
 	RESERVA: "reserva",
 	CLIENT: "client",
@@ -21,30 +31,54 @@ const TYPESDB = Object.freeze({
 	INIT: "initialData",
 });
 
-// --- MODELS ----
+// --- MODELOS (POO) ----
+
+/**
+ * Clase que representa una Reserva
+ */
 class Reserva {
-	constructor(email, date, roomType, numRoom) {
+	/**
+	 * @param {string} email - Email del cliente
+	 * @param {Object} date - Rango de fechas
+	 * @param {string} date.checkIn - Fecha de entrada (YYYY-MM-DD)
+	 * @param {string} date.checkOut - Fecha de salida (YYYY-MM-DD)
+	 * @param {string} roomCode - Código único de la habitación asignada
+	 * @param {number} total - Coste total calculado de la estancia
+	 */
+
+	constructor(email, date, roomCode, total) {
 		this.user = email;
 		this.date = date;
-		this.roomType = roomType;
-		this.numRoom = numRoom;
+		this.roomCode = roomCode;
+		this.total = total;
 	}
 
 	getType() {
 		return TYPESDB.RESERVA;
 	}
 
+	/** @returns {Object} Representación plana para almacenamiento */
 	getInfo() {
 		return {
 			user: this.user,
 			date: this.date,
-			roomType: this.roomType,
-			numRoom: this.numRoom,
+			roomCode: this.roomCode,
+			total: this.total,
 		};
 	}
 }
 
+/**
+ * Clase que representa un Cliente
+ */
 class Client {
+	/**
+	 * @param {string} email - Email de contacto
+	 * @param {string} telf - Teléfono
+	 * @param {string} nombre - Nombre
+	 * @param {string} apellido - Apellido
+	 * @param {string} dni - DNI/NIE
+	 */
 	constructor(email, telf, nombre, apellido, dni) {
 		this.email = email;
 		this.telf = telf;
@@ -68,7 +102,16 @@ class Client {
 	}
 }
 
+/**
+ * Clase que representa una Habitación del Hotel
+ */
 class Room {
+	/**
+	 * @param {string} code - Identificador (ej: '101')
+	 * @param {string} type - Categoría (ROOMTYPE)
+	 * @param {number} maxGuest - Capacidad máxima
+	 * @param {number} price - Precio por noche
+	 */
 	constructor(code, type, maxGuest, price) {
 		this.code = code;
 		this.type = type;
@@ -90,98 +133,99 @@ class Room {
 	}
 }
 
-// ---- EXAMPLE DATA ----
+// ---- DATOS INICIALES (Seed) ----
+
 const roomData = [
 	new Room("101", ROOMTYPE.INDIVIDUAL, 1, 45.0),
 	new Room("102", ROOMTYPE.INDIVIDUAL, 1, 45.0),
-	new Room("103", ROOMTYPE.INDIVIDUAL, 1, 50.0),
-	new Room("104", ROOMTYPE.INDIVIDUAL, 1, 50.0),
-	new Room("105", ROOMTYPE.INDIVIDUAL, 1, 60.0),
 	new Room("201", ROOMTYPE.DOUBLES, 2, 75.0),
 	new Room("202", ROOMTYPE.DOUBLES, 2, 75.0),
-	new Room("203", ROOMTYPE.DOUBLES, 2, 80.0),
-	new Room("204", ROOMTYPE.DOUBLES, 2, 80.0),
-	new Room("205", ROOMTYPE.DOUBLES, 2, 85.0),
-	new Room("206", ROOMTYPE.DOUBLES, 2, 85.0),
-	new Room("207", ROOMTYPE.DOUBLES, 2, 90.0),
-	new Room("208", ROOMTYPE.DOUBLES, 2, 95.0),
-	new Room("301", ROOMTYPE.DELUXE, 1, 120.0),
-	new Room("302", ROOMTYPE.DELUXE, 1, 120.0),
-	new Room("303", ROOMTYPE.DELUXE, 2, 140.0),
-	new Room("304", ROOMTYPE.DELUXE, 2, 140.0),
-	new Room("305", ROOMTYPE.DELUXE, 2, 150.0),
-	new Room("401", ROOMTYPE.SUITE, 1, 180.0),
-	new Room("402", ROOMTYPE.SUITE, 1, 180.0),
-	new Room("403", ROOMTYPE.SUITE, 2, 220.0),
-	new Room("404", ROOMTYPE.SUITE, 2, 220.0),
-	new Room("405", ROOMTYPE.SUITE, 2, 250.0),
-	new Room("501", ROOMTYPE.PRESIDENTIAL, 1, 400.0),
-	new Room("502", ROOMTYPE.PRESIDENTIAL, 1, 450.0),
-	new Room("503", ROOMTYPE.PRESIDENTIAL, 2, 500.0),
-	new Room("504", ROOMTYPE.PRESIDENTIAL, 2, 550.0),
-	new Room("PH-01", ROOMTYPE.PENTHOUSE, 1, 800.0),
-	new Room("PH-02", ROOMTYPE.PENTHOUSE, 2, 950.0),
-	new Room("PH-03", ROOMTYPE.PENTHOUSE, 2, 1200.0),
+	new Room("301", ROOMTYPE.DELUXE, 2, 120.0),
+	new Room("401", ROOMTYPE.SUITE, 2, 180.0),
+	new Room("501", ROOMTYPE.PRESIDENTIAL, 2, 450.0),
+	new Room("PH-01", ROOMTYPE.PENTHOUSE, 2, 950.0),
 ];
 
-// ---- START LOGIC ----
+// ---- FUNCIONES DE UTILIDAD ----
 
-// Obtiene los datos almacenados en LocalStorage por nombre de colección
-function getDataLocalStorage(dbName) {
-	const data = localStorage.getItem(dbName);
-	if (data === null) return [];
-	return JSON.parse(data);
+/**
+ * Calcula el número de noches entre dos fechas.
+ * @param {string} checkIn
+ * @param {string} checkOut
+ * @returns {number}
+ */
+function calculateNights(checkIn, checkOut) {
+	const start = new Date(checkIn);
+	const end = new Date(checkOut);
+	const diffTime = end - start;
+	return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-// Guarda un objeto o array en LocalStorage bajo un nombre específico
+/**
+ * Comprueba si dos rangos de fechas se solapan (Lógica de ocupación).
+ */
+function areDatesOverlapping(s1, e1, s2, e2) {
+	return new Date(s1) < new Date(e2) && new Date(s2) < new Date(e1);
+}
+
+/** Mezcla aleatoria de array para visualización */
+function shuffleArray(array) {
+	for (let i = array.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[array[i], array[j]] = [array[j], array[i]];
+	}
+	return array;
+}
+
+/** Obtener datos de LocalStorage */
+function getDataLocalStorage(dbName) {
+	const data = localStorage.getItem(dbName);
+	return data ? JSON.parse(data) : [];
+}
+
+/** Guardar datos en LocalStorage */
 function saveInLocalStorage(dbName, data) {
 	localStorage.setItem(dbName, JSON.stringify(data));
 }
 
-// Inicializa la base de datos de habitaciones con datos de ejemplo si está vacía
+/** Inicializa las habitaciones si el almacenamiento está vacío */
 function seedRooms() {
 	const roomsToSave = roomData.map((room) => room.getInfo());
 	saveInLocalStorage(TYPESDB.ROOM, roomsToSave);
 }
 
-// Muestra un mensaje de error, éxito o advertencia en un elemento específico del DOM
+/** Muestra mensajes de error/éxito en la interfaz */
 function typeCustomErrorMessage(idElement, status, message) {
 	const span = document.getElementById(idElement);
 	if (!span) return;
-
 	span.className = "";
-	switch (status.toLowerCase()) {
-		case TYPESTATUS.ERROR:
-			span.classList.add("messageError");
-			span.innerText = message;
-			break;
-		case TYPESTATUS.SUCCESS:
-			span.classList.add("messageSuccess");
-			span.innerText = message;
-			break;
-		case TYPESTATUS.WARNING:
-			span.classList.add("messageWarning");
-			span.innerText = message;
-			break;
-	}
+	span.classList.add(
+		status === TYPESTATUS.ERROR
+			? "messageError"
+			: status === TYPESTATUS.SUCCESS
+				? "messageSuccess"
+				: "messageWarning",
+	);
+	span.innerText = message;
 }
 
-// Genera el código HTML para una tarjeta de habitación en la página principal
+// ---- COMPONENTES DE INTERFAZ ----
+
+/** Genera el HTML de una tarjeta de habitación */
 function ComponentHotelRoom(code, type, maxGuest, price) {
 	return `
-    <div class="col-lg-4 col-md-6">
+    <div class="col-lg-3 col-md-6">
         <div class="card room-card h-100 shadow-sm">
             <div class="room-image-container position-relative">
-                <img src="https://placehold.co/600x400" alt="${type}" class="room-image img-fluid rounded-top" />
-                <span class="availability-badge available position-absolute top-0 end-0 m-2">Disponible</span>
+                <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=500&q=80" alt="${type}" class="room-image img-fluid rounded-top" />
+                <span class="bg-white fw-bold availability-badge available position-absolute top-0 end-0 m-2">Disponible</span>
             </div>
             <div class="room-card-body p-3 d-flex flex-column">
                 <h3 class="room-title mb-2 text-capitalize">${type}</h3>
                 <div class="room-features mb-2 text-muted small">
-                    <span class="me-3"><i class="bi bi-people"></i> ${maxGuest} personas</span>
+                    <span class="me-3"><i class="bi bi-people"></i> ${maxGuest} pers.</span>
                     <span><i class="bi bi-door-closed"></i> Hab. ${code}</span>
                 </div>
-                <p class="room-description flex-grow-1">Habitación ${type.toLowerCase()} equipada con todas las comodidades.</p>
                 <div class="room-price d-flex align-items-end justify-content-between">
                     <div>
                         <span class="price-amount fs-4 fw-bold">€${price}</span>
@@ -194,66 +238,77 @@ function ComponentHotelRoom(code, type, maxGuest, price) {
     </div>`;
 }
 
-// Genera una opción para el elemento select de selección de habitación
-function ComponentSelectRoom(code, type) {
-	return `<option value="${code}">Habitación ${code} - ${type}</option>`;
-}
+// ---- LÓGICA DE NEGOCIO ----
 
-// Gestiona la lógica de búsqueda de habitaciones desde la caja de búsqueda principal
+/**
+ * Procesa la búsqueda inicial desde el index
+ */
 function searchBoxSection(e) {
 	if (e) e.preventDefault();
-	const dateCheckIn = document.getElementById("searchCheckIn")?.value;
-	const dateCheckOut = document.getElementById("searchCheckOut")?.value;
-	const countGuests =
+	const checkIn = document.getElementById("searchCheckIn")?.value;
+	const checkOut = document.getElementById("searchCheckOut")?.value;
+	const guests =
 		parseInt(document.getElementById("searchGuests")?.value, 10) || 0;
 
-	if (!dateCheckIn || !dateCheckOut || countGuests === 0) {
+	if (!checkIn || !checkOut || guests === 0) {
 		typeCustomErrorMessage(
 			"error",
 			TYPESTATUS.ERROR,
-			"Por favor, complete todos los campos.",
+			"Completa todos los campos.",
 		);
 		return;
 	}
 
-	const newCheckInDate = new Date(dateCheckIn);
-	const newCheckOutDate = new Date(dateCheckOut);
-
-	if (newCheckInDate > newCheckOutDate) {
+	if (new Date(checkIn) >= new Date(checkOut)) {
 		typeCustomErrorMessage(
 			"error",
 			TYPESTATUS.ERROR,
-			"El check-in no puede ser posterior al check-out.",
+			"El check-out debe ser después del check-in.",
 		);
 		return;
 	}
 
-	const initialData = {
-		checkIn: dateCheckIn,
-		checkOut: dateCheckOut,
-		guests: countGuests,
-	};
-	saveInLocalStorage(TYPESDB.INIT, initialData);
+	saveInLocalStorage(TYPESDB.INIT, { checkIn, checkOut, guests });
 	displayRooms();
 }
 
-// Filtra y muestra las habitaciones disponibles en el contenedor correspondiente
+/**
+ * Filtra y muestra las habitaciones disponibles
+ */
 function displayRooms() {
-	const roomsContainer = document.getElementById("roomsContainer");
-	if (!roomsContainer) return;
-	roomsContainer.innerHTML = "";
+	const container = document.getElementById("roomsContainer");
+	if (!container) return;
+	container.innerHTML = "";
 
 	const rooms = getDataLocalStorage(TYPESDB.ROOM);
 	const initialData = getDataLocalStorage(TYPESDB.INIT);
-	const requiredGuests = parseInt(initialData.guests, 10) || 0;
+	const reservas = getDataLocalStorage(TYPESDB.RESERVA);
 
-	let filteredRooms = rooms;
-	if (requiredGuests !== 0) {
-		filteredRooms = rooms.filter((room) => room.maxguest === requiredGuests);
+	// FILTRADO REAL
+	const filteredRooms = rooms.filter((room) => {
+		if (room.maxguest < initialData.guests) return false;
+		const isOccupied = reservas.some(
+			(res) =>
+				res.roomCode === room.code &&
+				areDatesOverlapping(
+					initialData.checkIn,
+					initialData.checkOut,
+					res.date.checkIn,
+					res.date.checkOut,
+				),
+		);
+		if (isOccupied) return false;
+		return true;
+	});
+
+	if (filteredRooms.length === 0) {
+		container.innerHTML =
+			"<p class='text-center w-100 my-5'>No hay habitaciones disponibles para estas fechas o capacidad.</p>";
+		return;
 	}
 
-	filteredRooms.forEach((room) => {
-		roomsContainer.innerHTML += ComponentHotelRoom(
+	shuffleArray(filteredRooms).forEach((room) => {
+		container.innerHTML += ComponentHotelRoom(
 			room.code,
 			room.type,
 			room.maxguest,
@@ -261,99 +316,149 @@ function displayRooms() {
 		);
 	});
 
+	// Eventos para botones de reserva
 	document.querySelectorAll(".btn-reserva").forEach((btn) => {
 		btn.addEventListener("click", (e) => {
-			const codeRoom = e.target.id.split("-")[2];
-			const datos = getDataLocalStorage(TYPESDB.INIT);
-			const newDatos = { ...datos, codeRoom: codeRoom };
-			saveInLocalStorage(TYPESDB.INIT, newDatos);
+			const code = e.target.id.split("-")[2];
+			const currentInit = getDataLocalStorage(TYPESDB.INIT);
+			saveInLocalStorage(TYPESDB.INIT, { ...currentInit, codeRoom: code });
 			window.location.href = "src/pages/form.html";
 		});
 	});
 }
-displayRooms();
 
-// Rellena el formulario de reserva con los datos previos seleccionados por el usuario
-function printFormOrder() {
-	const dataRoomUser = getDataLocalStorage(TYPESDB.ROOM);
-	const formSelectRoom = document.getElementById("roomType");
-	if (!formSelectRoom) return;
+/**
+ * Calcula y muestra el precio total en el formulario
+ */
+function updateTotalPrice() {
+	const roomCode = document.getElementById("roomType").value;
+	const checkIn = document.getElementById("formCheckIn").value;
+	const checkOut = document.getElementById("formCheckOut").value;
+	const totalDisplay = document.getElementById("totalPriceDisplay");
 
-	dataRoomUser.forEach((room) => {
-		formSelectRoom.innerHTML += ComponentSelectRoom(room.code, room.type);
-	});
-
-	const initData = getDataLocalStorage(TYPESDB.INIT);
-	if (initData?.codeRoom) {
-		formSelectRoom.value = initData.codeRoom;
-		document.getElementById("formCheckIn").value = initData.checkIn || "";
-		document.getElementById("formCheckOut").value = initData.checkOut || "";
-		document.getElementById("formGuests").value = initData.guests || "";
-	}
-}
-
-// Gestiona el envío del formulario de reserva y guarda los datos finales del cliente
-function confirmBook() {
-	const formDataUser = document.getElementById("reservationForm");
-	if (!formDataUser) return;
-
-	formDataUser.addEventListener("submit", (e) => {
-		e.preventDefault();
-		const formData = new FormData(formDataUser);
-
-		let isValid = true;
-		for (const [key, value] of formData) {
-			if (value === "" && key !== "terms") {
-				isValid = false;
-				break;
+	if (roomCode && checkIn && checkOut) {
+		const nights = calculateNights(checkIn, checkOut);
+		if (nights > 0) {
+			const rooms = getDataLocalStorage(TYPESDB.ROOM);
+			const room = rooms.find((r) => r.code === roomCode);
+			if (room) {
+				const total = nights * room.price;
+				if (totalDisplay) {
+					totalDisplay.innerHTML = `<strong>Total: ${total.toFixed(2)}€</strong> (${nights} noches x ${room.price}€)`;
+				}
+				return total;
 			}
 		}
+	}
+	if (totalDisplay) totalDisplay.innerText = "";
+	return 0;
+}
 
-		if (!isValid) {
+/**
+ * Prepara el formulario de reserva con los datos del paso anterior
+ */
+function printFormOrder() {
+	const rooms = getDataLocalStorage(TYPESDB.ROOM);
+	const select = document.getElementById("roomType");
+	if (!select) return;
+
+	// Rellenar select de habitaciones
+	rooms.forEach((room) => {
+		select.innerHTML += `<option value="${room.code}">Habitación ${room.code} - ${room.type} (${room.price}€/noche)</option>`;
+	});
+
+	const init = getDataLocalStorage(TYPESDB.INIT);
+	if (init.codeRoom) {
+		select.value = init.codeRoom;
+		document.getElementById("formCheckIn").value = init.checkIn || "";
+		document.getElementById("formCheckOut").value = init.checkOut || "";
+		document.getElementById("formGuests").value = init.guests || "";
+		updateTotalPrice();
+	}
+
+	// Recalcular precio cuando cambien datos clave
+	[
+		select,
+		document.getElementById("formCheckIn"),
+		document.getElementById("formCheckOut"),
+	].forEach((el) => {
+		el.addEventListener("change", updateTotalPrice);
+	});
+}
+
+/**
+ * Procesa la confirmación final de la reserva
+ */
+function confirmBook() {
+	const form = document.getElementById("reservationForm");
+	if (!form) return;
+
+	form.addEventListener("submit", (e) => {
+		e.preventDefault();
+		const fd = new FormData(form);
+		const checkIn = fd.get("checkIn");
+		const checkOut = fd.get("checkOut");
+		const roomCode = fd.get("roomType");
+
+		// VALIDACIONES FINALES
+		if (new Date(checkIn) >= new Date(checkOut)) {
 			typeCustomErrorMessage(
 				"messageInfoUser",
 				TYPESTATUS.ERROR,
-				"Por favor, complete todos los campos.",
+				"La fecha de salida es inválida.",
 			);
 			return;
 		}
 
+		const reservas = getDataLocalStorage(TYPESDB.RESERVA);
+		const isOccupied = reservas.some(
+			(res) =>
+				res.roomCode === roomCode &&
+				areDatesOverlapping(
+					checkIn,
+					checkOut,
+					res.date.checkIn,
+					res.date.checkOut,
+				),
+		);
+
+		if (isOccupied) {
+			typeCustomErrorMessage(
+				"messageInfoUser",
+				TYPESTATUS.ERROR,
+				"La habitación ya no está disponible para esas fechas.",
+			);
+			return;
+		}
+
+		const total = updateTotalPrice();
 		const client = new Client(
-			formData.get("email"),
-			formData.get("phone"),
-			formData.get("firstName"),
-			formData.get("lastName"),
-			formData.get("dni"),
+			fd.get("email"),
+			fd.get("phone"),
+			fd.get("firstName"),
+			fd.get("lastName"),
+			fd.get("dni"),
 		);
-
 		const book = new Reserva(
-			formData.get("email"),
-			{
-				checkIn: formData.get("checkIn"),
-				checkOut: formData.get("checkOut"),
-			},
-			formData.get("roomType"),
-			formData.get("roomType"),
+			fd.get("email"),
+			{ checkIn, checkOut },
+			roomCode,
+			total,
 		);
 
+		// Persistencia
 		const clients = getDataLocalStorage(TYPESDB.CLIENT);
 		clients.push(client.getInfo());
 		saveInLocalStorage(TYPESDB.CLIENT, clients);
 
-		const reservas = getDataLocalStorage(TYPESDB.RESERVA);
 		reservas.push(book.getInfo());
 		saveInLocalStorage(TYPESDB.RESERVA, reservas);
 
-		typeCustomErrorMessage(
-			"messageInfoUser",
-			TYPESTATUS.SUCCESS,
-			"¡Reserva confirmada! Gracias por elegirnos.",
-		);
-
+		// Feedback visual (Modal)
 		if (typeof bootstrap !== "undefined") {
-			const modalElement = document.getElementById("confirmationModal");
-			if (modalElement) {
-				const modal = new bootstrap.Modal(modalElement);
+			const modalEl = document.getElementById("confirmationModal");
+			if (modalEl) {
+				const modal = new bootstrap.Modal(modalEl);
 				document.getElementById("confirmEmail").innerText = client.email;
 				modal.show();
 			}
@@ -361,24 +466,16 @@ function confirmBook() {
 	});
 }
 
-// Punto de entrada principal que inicializa la aplicación según la página actual
+// ---- INICIALIZACIÓN ----
 document.addEventListener("DOMContentLoaded", () => {
-	if (getDataLocalStorage(TYPESDB.ROOM).length === 0) {
-		seedRooms();
-	}
+	if (getDataLocalStorage(TYPESDB.ROOM).length === 0) seedRooms();
 
 	const path = window.location.pathname;
-	const isHome =
-		path.endsWith("index.html") || path === "/" || path.endsWith("/");
-	const isFormPage = path.includes("form.html");
-
-	if (isHome) {
-		const searchForm = document.getElementById("searchForm");
-		if (searchForm) searchForm.addEventListener("submit", searchBoxSection);
+	if (path.endsWith("index.html") || path === "/" || path === "") {
+		const sf = document.getElementById("searchForm");
+		if (sf) sf.addEventListener("submit", searchBoxSection);
 		displayRooms();
-	}
-
-	if (isFormPage) {
+	} else if (path.includes("form.html")) {
 		printFormOrder();
 		confirmBook();
 	}
