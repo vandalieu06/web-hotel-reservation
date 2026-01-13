@@ -1,615 +1,412 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-	<head>
-		<meta charset="UTF-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0" />
-		<title>Reservar Habitación - LuxStay Hotel</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Reservar Habitación - LuxStay Hotel</title>
 
-		<!-- Bootstrap 5 CSS -->
-		<link
-			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-			rel="stylesheet" />
+        <!-- Bootstrap 5 CSS -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
 
-		<!-- Bootstrap Icons -->
-		<link
-			rel="stylesheet"
-			href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.min.css" />
+        <!-- Bootstrap Icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.min.css"
+        />
 
-		<!-- Custom CSS -->
-		<link
-			rel="stylesheet"
-			href="../css/styles.css" />
-	</head>
-	<body>
-		<!-- Navbar -->
-		<nav class="navbar navbar-expand-lg navbar-custom sticky-top">
-			<div class="container">
-				<a
-					class="navbar-brand"
-					href="../../index.html">
-					<i class="bi bi-building"></i> LuxStay
-				</a>
-				<button
-					class="navbar-toggler"
-					type="button"
-					data-bs-toggle="collapse"
-					data-bs-target="#navbarNav">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div
-					class="collapse navbar-collapse"
-					id="navbarNav">
-					<ul class="navbar-nav ms-auto">
-						<li class="nav-item">
-							<a
-								class="nav-link"
-								href="../../index.html#habitaciones"
-								>Habitaciones</a
-							>
-						</li>
-						<li class="nav-item">
-							<a
-								class="nav-link"
-								href="../../index.html#servicios"
-								>Servicios</a
-							>
-						</li>
-						<li class="nav-item">
-							<a
-								class="nav-link"
-								href="../../index.html#contacto"
-								>Contacto</a
-							>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</nav>
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="../css/styles.css" />
+    </head>
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+            <div class="container">
+                <a class="navbar-brand" href="../../index.html">
+                    <i class="bi bi-building"></i> LuxStay
+                </a>
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="../../index.html#habitaciones"
+                                >Habitaciones</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="../../index.html#servicios"
+                                >Servicios</a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../../index.html#contacto"
+                                >Contacto</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-		<!-- Form Section -->
-		<section class="section-spacing form-page-section">
-			<div class="container">
-				<div class="row justify-content-center">
-					<div class="col-lg-10">
-						<!-- Header -->
-						<div class="text-center mb-5">
-							<h1 class="section-title">
-								Completa tu <span class="text-gradient">Reserva</span>
-							</h1>
-							<p class="section-subtitle">
-								Solo faltan unos pasos para tu estancia perfecta
-							</p>
-						</div>
+        <!-- Form Section -->
+        <section class="section-spacing form-page-section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <!-- Header -->
+                        <div class="text-center mb-5">
+                            <h1 class="section-title">
+                                Completa tu
+                                <span class="text-gradient">Reserva</span>
+                            </h1>
+                            <p class="section-subtitle">
+                                Solo faltan unos pasos para tu estancia perfecta
+                            </p>
+                        </div>
 
-						<div class="row g-4">
-							<!-- Formulario Principal -->
-							<div class="col-lg-8">
-								<div class="form-container">
-									<form id="reservationForm">
-										<!-- Sección: Información Personal -->
-										<div class="mb-5">
-											<h4 class="mb-4">
-												<i class="bi bi-person-circle text-gradient"></i>
-												Información Personal
-											</h4>
+                        <div class="row g-4">
+                            <!-- Formulario Principal -->
+                            <div class="col">
+                                <div class="form-container">
+                                    <form id="reservationForm">
+                                        <!-- Sección: Información Personal -->
+                                        <div class="mb-5">
+                                            <h4 class="mb-4">
+                                                <i
+                                                    class="bi bi-person-circle text-gradient"
+                                                ></i>
+                                                Información Personal
+                                            </h4>
+                                            <span id="messageInfoUser"></span>
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label
+                                                        for="firstName"
+                                                        class="form-label"
+                                                        >Nombre *</label
+                                                    >
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="firstName"
+                                                        name="firstName"
+                                                        placeholder="Tu nombre"
+                                                        required
+                                                    />
+                                                    <div
+                                                        class="form-error"
+                                                        id="firstNameError"
+                                                    ></div>
+                                                </div>
 
-											<div class="row g-3">
-												<div class="col-md-6">
-													<label
-														for="firstName"
-														class="form-label"
-														>Nombre *</label
-													>
-													<input
-														type="text"
-														class="form-control"
-														id="firstName"
-														name="firstName"
-														placeholder="Tu nombre"
-														required />
-													<div
-														class="form-error"
-														id="firstNameError"></div>
-												</div>
+                                                <div class="col-md-6">
+                                                    <label
+                                                        for="lastName"
+                                                        class="form-label"
+                                                        >Apellidos *</label
+                                                    >
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="lastName"
+                                                        name="lastName"
+                                                        placeholder="Tus apellidos"
+                                                        required
+                                                    />
+                                                    <div
+                                                        class="form-error"
+                                                        id="lastNameError"
+                                                    ></div>
+                                                </div>
 
-												<div class="col-md-6">
-													<label
-														for="lastName"
-														class="form-label"
-														>Apellidos *</label
-													>
-													<input
-														type="text"
-														class="form-control"
-														id="lastName"
-														name="lastName"
-														placeholder="Tus apellidos"
-														required />
-													<div
-														class="form-error"
-														id="lastNameError"></div>
-												</div>
+                                                <div class="col-md-6">
+                                                    <label
+                                                        for="email"
+                                                        class="form-label"
+                                                        >Email *</label
+                                                    >
+                                                    <input
+                                                        type="email"
+                                                        class="form-control"
+                                                        id="email"
+                                                        name="email"
+                                                        placeholder="tu@email.com"
+                                                        required
+                                                    />
+                                                    <div
+                                                        class="form-error"
+                                                        id="emailError"
+                                                    ></div>
+                                                </div>
 
-												<div class="col-md-6">
-													<label
-														for="email"
-														class="form-label"
-														>Email *</label
-													>
-													<input
-														type="email"
-														class="form-control"
-														id="email"
-														name="email"
-														placeholder="tu@email.com"
-														required />
-													<div
-														class="form-error"
-														id="emailError"></div>
-												</div>
+                                                <div class="col-md-6">
+                                                    <label
+                                                        for="phone"
+                                                        class="form-label"
+                                                        >Teléfono *</label
+                                                    >
+                                                    <input
+                                                        type="tel"
+                                                        class="form-control"
+                                                        id="phone"
+                                                        name="phone"
+                                                        placeholder="+34 600 000 000"
+                                                        required
+                                                    />
+                                                    <div
+                                                        class="form-error"
+                                                        id="phoneError"
+                                                    ></div>
+                                                </div>
 
-												<div class="col-md-6">
-													<label
-														for="phone"
-														class="form-label"
-														>Teléfono *</label
-													>
-													<input
-														type="tel"
-														class="form-control"
-														id="phone"
-														name="phone"
-														placeholder="+34 600 000 000"
-														required />
-													<div
-														class="form-error"
-														id="phoneError"></div>
-												</div>
+                                                <div class="col-12">
+                                                    <label
+                                                        for="dni"
+                                                        class="form-label"
+                                                        >DNI/Pasaporte *</label
+                                                    >
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        id="dni"
+                                                        name="dni"
+                                                        placeholder="12345678A"
+                                                        required
+                                                    />
+                                                    <div
+                                                        class="form-error"
+                                                        id="dniError"
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        </div>
 
-												<div class="col-12">
-													<label
-														for="dni"
-														class="form-label"
-														>DNI/Pasaporte *</label
-													>
-													<input
-														type="text"
-														class="form-control"
-														id="dni"
-														name="dni"
-														placeholder="12345678A"
-														required />
-													<div
-														class="form-error"
-														id="dniError"></div>
-												</div>
-											</div>
-										</div>
+                                        <hr class="my-4" />
 
-										<hr class="my-4" />
+                                        <!-- Sección: Detalles de la Reserva -->
+                                        <div class="mb-5">
+                                            <h4 class="mb-4">
+                                                <i
+                                                    class="bi bi-calendar-check text-gradient"
+                                                ></i>
+                                                Detalles de la Reserva
+                                            </h4>
 
-										<!-- Sección: Detalles de la Reserva -->
-										<div class="mb-5">
-											<h4 class="mb-4">
-												<i class="bi bi-calendar-check text-gradient"></i>
-												Detalles de la Reserva
-											</h4>
+                                            <div class="row g-3">
+                                                <div class="col-md-12">
+                                                    <label
+                                                        for="roomType"
+                                                        class="form-label"
+                                                        >Tipo de Habitación
+                                                        *</label
+                                                    >
+                                                    <select
+                                                        class="form-select"
+                                                        id="roomType"
+                                                        name="roomType"
+                                                        id="formSelectRoom"
+                                                        required
+                                                    >
+                                                        <option value="">
+                                                            Selecciona una
+                                                            habitación
+                                                        </option>
+                                                    </select>
+                                                    <div
+                                                        class="form-error"
+                                                        id="roomTypeError"
+                                                    ></div>
+                                                </div>
 
-											<div class="row g-3">
-												<div class="col-md-12">
-													<label
-														for="roomType"
-														class="form-label"
-														>Tipo de Habitación *</label
-													>
-													<select
-														class="form-select"
-														id="roomType"
-														name="roomType"
-														required
-														onchange="actualizarPrecio()">
-														<option value="">Selecciona una habitación</option>
-														<option
-															value="individual"
-															data-price="79">
-															Habitación Individual - €79/noche
-														</option>
-														<option
-															value="doubles"
-															data-price="99">
-															Habitación Doble - €99/noche
-														</option>
-														<option
-															value="deluxe"
-															data-price="149">
-															Suite Deluxe - €149/noche
-														</option>
-														<option
-															value="suite"
-															data-price="189">
-															Suite Ejecutiva - €189/noche
-														</option>
-														<option
-															value="presidential"
-															data-price="349">
-															Presidential Suite - €349/noche
-														</option>
-														<option
-															value="penthouse"
-															data-price="499">
-															Penthouse - €499/noche
-														</option>
-													</select>
-													<div
-														class="form-error"
-														id="roomTypeError"></div>
-												</div>
+                                                <div class="col-md-6">
+                                                    <label
+                                                        for="checkIn"
+                                                        class="form-label"
+                                                        >Check-in *</label
+                                                    >
+                                                    <input
+                                                        type="date"
+                                                        class="form-control"
+                                                        id="formCheckIn"
+                                                        name="checkIn"
+                                                        required
+                                                    />
+                                                    <div
+                                                        class="form-error"
+                                                        id="checkInError"
+                                                    ></div>
+                                                </div>
 
-												<div class="col-md-6">
-													<label
-														for="checkIn"
-														class="form-label"
-														>Check-in *</label
-													>
-													<input
-														type="date"
-														class="form-control"
-														id="checkIn"
-														name="checkIn"
-														required
-														onchange="calcularNoches()" />
-													<div
-														class="form-error"
-														id="checkInError"></div>
-												</div>
+                                                <div class="col-md-6">
+                                                    <label
+                                                        for="checkOut"
+                                                        class="form-label"
+                                                        >Check-out *</label
+                                                    >
+                                                    <input
+                                                        type="date"
+                                                        class="form-control"
+                                                        id="formCheckOut"
+                                                        name="checkOut"
+                                                        required
+                                                    />
+                                                    <div
+                                                        class="form-error"
+                                                        id="checkOutError"
+                                                    ></div>
+                                                </div>
 
-												<div class="col-md-6">
-													<label
-														for="checkOut"
-														class="form-label"
-														>Check-out *</label
-													>
-													<input
-														type="date"
-														class="form-control"
-														id="checkOut"
-														name="checkOut"
-														required
-														onchange="calcularNoches()" />
-													<div
-														class="form-error"
-														id="checkOutError"></div>
-												</div>
+                                                <div class="col-md-6">
+                                                    <label
+                                                        for="guests"
+                                                        class="form-label"
+                                                        >Número de Huéspedes
+                                                        *</label
+                                                    >
+                                                    <select
+                                                        class="form-select"
+                                                        id="formGuests"
+                                                        name="guests"
+                                                        required
+                                                    >
+                                                        <option value="">
+                                                            Selecciona
+                                                        </option>
+                                                        <option value="1">
+                                                            1 persona
+                                                        </option>
+                                                        <option value="2">
+                                                            2 personas
+                                                        </option>
+                                                    </select>
+                                                    <div
+                                                        class="form-error"
+                                                        id="guestsError"
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        </div>
 
-												<div class="col-md-6">
-													<label
-														for="guests"
-														class="form-label"
-														>Número de Huéspedes *</label
-													>
-													<select
-														class="form-select"
-														id="guests"
-														name="guests"
-														required>
-														<option value="">Selecciona</option>
-														<option value="1">1 persona</option>
-														<option value="2">2 personas</option>
-													</select>
-													<div
-														class="form-error"
-														id="guestsError"></div>
-												</div>
+                                        <hr class="my-4" />
 
-												<div class="col-md-6">
-													<label
-														for="roomNumber"
-														class="form-label"
-														>Habitación Preferida</label
-													>
-													<select
-														class="form-select"
-														id="roomNumber"
-														name="roomNumber">
-														<option value="">Sin preferencia</option>
-														<option value="101">Habitación 101</option>
-														<option value="102">Habitación 102</option>
-														<option value="201">Habitación 201</option>
-														<option value="202">Habitación 202</option>
-														<option value="301">Habitación 301</option>
-														<option value="302">Habitación 302</option>
-													</select>
-												</div>
-											</div>
-										</div>
+                                        <!-- Términos y Condiciones -->
+                                        <div class="mb-4">
+                                            <div class="form-check">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    id="terms"
+                                                    name="terms"
+                                                    required
+                                                />
+                                                <label
+                                                    class="form-check-label"
+                                                    for="terms"
+                                                >
+                                                    Acepto los
+                                                    <a
+                                                        href="#"
+                                                        class="text-gradient"
+                                                        >términos y
+                                                        condiciones</a
+                                                    >
+                                                    y la
+                                                    <a
+                                                        href="#"
+                                                        class="text-gradient"
+                                                        >política de
+                                                        cancelación</a
+                                                    >
+                                                    *
+                                                </label>
+                                            </div>
+                                            <div
+                                                class="form-error"
+                                                id="termsError"
+                                            ></div>
+                                        </div>
 
-										<hr class="my-4" />
+                                        <!-- Botón de Envío -->
+                                        <div class="d-grid gap-2">
+                                            <button
+                                                type="submit"
+                                                class="btn btn-reserve btn-lg"
+                                            >
+                                                <i
+                                                    class="bi bi-check-circle"
+                                                ></i>
+                                                Confirmar Reserva
+                                            </button>
+                                            <a
+                                                href="../../index.html"
+                                                class="btn btn-outline-secondary"
+                                            >
+                                                <i class="bi bi-arrow-left"></i>
+                                                Volver a habitaciones
+                                            </a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-										<!-- Sección: Servicios Adicionales -->
-										<div class="mb-5">
-											<h4 class="mb-4">
-												<i class="bi bi-star text-gradient"></i> Servicios
-												Adicionales
-											</h4>
+        <!-- Modal de Confirmación -->
+        <div class="modal fade" id="confirmationModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body text-center py-5">
+                        <div class="mb-4">
+                            <i
+                                class="bi bi-check-circle-fill confirmation-icon"
+                            ></i>
+                        </div>
+                        <h3 class="mb-3">¡Reserva Confirmada!</h3>
+                        <p class="text-muted mb-4">
+                            Hemos enviado un email de confirmación a
+                            <strong id="confirmEmail"></strong>
+                        </p>
+                        <div class="d-grid gap-2">
+                            <button
+                                class="btn btn-reserve"
+                                onclick="
+                                    window.location.href = '../../index.html'
+                                "
+                            >
+                                Volver al inicio
+                            </button>
+                            <button
+                                class="btn btn-outline-secondary"
+                                data-bs-dismiss="modal"
+                            >
+                                Ver detalles
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-											<div class="row g-3">
-												<div class="col-md-6">
-													<div class="form-check">
-														<input
-															class="form-check-input"
-															type="checkbox"
-															id="breakfast"
-															name="breakfast" />
-														<label
-															class="form-check-label"
-															for="breakfast">
-															<strong>Desayuno incluido</strong>
-															<small class="d-block text-muted"
-																>+€15/persona/día</small
-															>
-														</label>
-													</div>
-												</div>
+        <!-- Bootstrap JS Bundle -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-												<div class="col-md-6">
-													<div class="form-check">
-														<input
-															class="form-check-input"
-															type="checkbox"
-															id="parking"
-															name="parking" />
-														<label
-															class="form-check-label"
-															for="parking">
-															<strong>Parking privado</strong>
-															<small class="d-block text-muted">+€10/día</small>
-														</label>
-													</div>
-												</div>
-
-												<div class="col-md-6">
-													<div class="form-check">
-														<input
-															class="form-check-input"
-															type="checkbox"
-															id="spa"
-															name="spa" />
-														<label
-															class="form-check-label"
-															for="spa">
-															<strong>Acceso Spa</strong>
-															<small class="d-block text-muted"
-																>+€25/persona</small
-															>
-														</label>
-													</div>
-												</div>
-
-												<div class="col-md-6">
-													<div class="form-check">
-														<input
-															class="form-check-input"
-															type="checkbox"
-															id="transfer"
-															name="transfer" />
-														<label
-															class="form-check-label"
-															for="transfer">
-															<strong>Transfer aeropuerto</strong>
-															<small class="d-block text-muted"
-																>+€35 trayecto</small
-															>
-														</label>
-													</div>
-												</div>
-
-												<div class="col-12">
-													<label
-														for="specialRequests"
-														class="form-label"
-														>Peticiones Especiales</label
-													>
-													<textarea
-														class="form-control"
-														id="specialRequests"
-														name="specialRequests"
-														rows="3"
-														placeholder="Alergias, preferencias de habitación, hora estimada de llegada..."></textarea>
-												</div>
-											</div>
-										</div>
-
-										<hr class="my-4" />
-
-										<!-- Términos y Condiciones -->
-										<div class="mb-4">
-											<div class="form-check">
-												<input
-													class="form-check-input"
-													type="checkbox"
-													id="terms"
-													name="terms"
-													required />
-												<label
-													class="form-check-label"
-													for="terms">
-													Acepto los
-													<a
-														href="#"
-														class="text-gradient"
-														>términos y condiciones</a
-													>
-													y la
-													<a
-														href="#"
-														class="text-gradient"
-														>política de cancelación</a
-													>
-													*
-												</label>
-											</div>
-											<div
-												class="form-error"
-												id="termsError"></div>
-										</div>
-
-										<!-- Botón de Envío -->
-										<div class="d-grid gap-2">
-											<button
-												type="submit"
-												class="btn btn-reserve btn-lg">
-												<i class="bi bi-check-circle"></i> Confirmar Reserva
-											</button>
-											<a
-												href="../../index.html"
-												class="btn btn-outline-secondary">
-												<i class="bi bi-arrow-left"></i> Volver a habitaciones
-											</a>
-										</div>
-									</form>
-								</div>
-							</div>
-
-							<!-- Resumen de Reserva (Sidebar) -->
-							<div class="col-lg-4">
-								<div class="form-container sticky-top sticky-summary">
-									<h5 class="mb-4">
-										<i class="bi bi-receipt"></i> Resumen de Reserva
-									</h5>
-
-									<div id="bookingSummary">
-										<!-- Vista Inicial -->
-										<div
-											id="emptySummary"
-											class="text-center py-4">
-											<i class="bi bi-calendar-x empty-summary-icon"></i>
-											<p class="text-muted mt-3">
-												Completa los datos para ver tu resumen
-											</p>
-										</div>
-
-										<!-- Vista con Datos -->
-										<div
-											id="filledSummary"
-											class="summary-hidden">
-											<!-- Habitación -->
-											<div class="mb-3 pb-3 border-bottom">
-												<small class="text-muted d-block mb-1"
-													>HABITACIÓN</small
-												>
-												<strong id="summaryRoom">-</strong>
-											</div>
-
-											<!-- Fechas -->
-											<div class="mb-3 pb-3 border-bottom">
-												<div class="row g-2">
-													<div class="col-6">
-														<small class="text-muted d-block mb-1"
-															>CHECK-IN</small
-														>
-														<strong id="summaryCheckIn">-</strong>
-													</div>
-													<div class="col-6">
-														<small class="text-muted d-block mb-1"
-															>CHECK-OUT</small
-														>
-														<strong id="summaryCheckOut">-</strong>
-													</div>
-												</div>
-											</div>
-
-											<!-- Noches -->
-											<div class="mb-3 pb-3 border-bottom">
-												<small class="text-muted d-block mb-1">DURACIÓN</small>
-												<strong id="summaryNights">- noches</strong>
-											</div>
-
-											<!-- Huéspedes -->
-											<div class="mb-3 pb-3 border-bottom">
-												<small class="text-muted d-block mb-1">HUÉSPEDES</small>
-												<strong id="summaryGuests">-</strong>
-											</div>
-
-											<!-- Desglose de Precio -->
-											<div class="mb-3 pb-3 border-bottom">
-												<div class="d-flex justify-content-between mb-2">
-													<span id="priceLine">- noches × €-</span>
-													<span id="priceSubtotal">€-</span>
-												</div>
-												<div id="extrasContainer"></div>
-											</div>
-
-											<!-- Total -->
-											<div class="mb-3">
-												<div
-													class="d-flex justify-content-between align-items-center">
-													<strong class="summary-total-label">Total</strong>
-													<strong
-														class="summary-total-price"
-														id="totalPrice"
-														>€0</strong
-													>
-												</div>
-												<small class="text-muted">IVA incluido</small>
-											</div>
-
-											<!-- Política de Cancelación -->
-											<div class="alert alert-info cancellation-policy">
-												<small>
-													<i class="bi bi-info-circle"></i>
-													<strong>Cancelación gratuita</strong> hasta 24 horas
-													antes del check-in
-												</small>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- Modal de Confirmación -->
-		<div
-			class="modal fade"
-			id="confirmationModal"
-			tabindex="-1">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-body text-center py-5">
-						<div class="mb-4">
-							<i class="bi bi-check-circle-fill confirmation-icon"></i>
-						</div>
-						<h3 class="mb-3">¡Reserva Confirmada!</h3>
-						<p class="text-muted mb-4">
-							Hemos enviado un email de confirmación a
-							<strong id="confirmEmail"></strong>
-						</p>
-						<div class="d-grid gap-2">
-							<button
-								class="btn btn-reserve"
-								onclick="window.location.href='../../index.html'">
-								Volver al inicio
-							</button>
-							<button
-								class="btn btn-outline-secondary"
-								data-bs-dismiss="modal">
-								Ver detalles
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Bootstrap JS Bundle -->
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-		<!-- Custom JS -->
-		<script src="../js/hotel.js"></script>
-	</body>
+        <!-- Custom JS -->
+        <script src="../js/hotel.js"></script>
+    </body>
 </html>
